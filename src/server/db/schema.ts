@@ -60,9 +60,30 @@ export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   sessions: many(sessions),
   posts: many(posts),
+  userRoles: many(userRoles),
 }));
 
 export type User = InferSelectModel<typeof users>;
+
+export const roles = mysqlTable("role", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+  name: varchar("name", { length: 255 }),
+});
+
+export const rolesRelations = relations(roles, ({ many }) => ({
+  userRoles: many(userRoles),
+}));
+
+export const userRoles = mysqlTable("userRole", {
+  id: bigint("id", { mode: "number" }).notNull().primaryKey(),
+  userId: varchar("userId", { length: 255 }).notNull(),
+  roleId: bigint("roleId", { mode: "number" }).notNull(),
+});
+
+export const userRolesRelations = relations(userRoles, ({ one }) => ({
+  role: one(roles),
+  user: one(users),
+}));
 
 export const accounts = mysqlTable(
   "account",

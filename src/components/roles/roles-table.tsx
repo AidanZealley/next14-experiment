@@ -10,15 +10,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { api } from "@/trpc/react";
-import { UserAvatar } from "@/components/user-avatar";
+import { RoleActions } from "./role-actions";
 
-export const UsersTable = () => {
+export const RolesTable = () => {
   const {
-    data: users,
+    data: roles,
     isError,
     isRefetching,
     isInitialLoading,
-  } = api.user.all.useQuery();
+  } = api.role.all.useQuery();
 
   return (
     <>
@@ -26,28 +26,20 @@ export const UsersTable = () => {
       {isInitialLoading && <p>Loading...</p>}
       {isRefetching && <p>Refreshing...</p>}
       <Table>
-        <TableCaption>A list of registered users.</TableCaption>
+        <TableCaption>A list of user roles.</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead></TableHead>
             <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {users?.map((user) => (
-            <TableRow key={user.id}>
-              <TableCell>
-                <UserAvatar
-                  src={user.image}
-                  name={user.name}
-                  className="h-6 w-6"
-                />
+          {roles?.map((role) => (
+            <TableRow key={role.id}>
+              <TableCell className="font-medium">{role.name}</TableCell>
+              <TableCell className="text-right">
+                <RoleActions roleId={role.id} />
               </TableCell>
-              <TableCell className="font-medium">{user.name}</TableCell>
-              <TableCell>{user.email}</TableCell>
-              <TableCell className="text-right">actions</TableCell>
             </TableRow>
           ))}
         </TableBody>

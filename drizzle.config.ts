@@ -8,5 +8,5 @@ export default {
   dbCredentials: {
     connectionString: env.DATABASE_URL,
   },
-  // tablesFilter: ["workout-planner_*"],
+  tablesFilter: ["workout-planner_*"],
 } satisfies Config;
