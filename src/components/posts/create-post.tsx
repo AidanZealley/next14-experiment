@@ -29,8 +29,8 @@ export const CreatePost = () => {
   const utils = api.useUtils();
   const { mutate, isLoading } = api.post.create.useMutation({
     onSuccess() {
-      utils.post.all.invalidate();
       utils.post.latest.invalidate();
+      utils.post.infinite.invalidate();
       reset();
     },
   });

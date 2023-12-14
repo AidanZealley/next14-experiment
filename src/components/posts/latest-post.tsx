@@ -1,10 +1,9 @@
 "use client";
 
 import formatRelative from "date-fns/formatRelative";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { initialsFromName } from "@/lib/utils";
 import { api } from "@/trpc/react";
 import { Clock } from "lucide-react";
+import { UserAvatar } from "../user-avatar";
 
 export const LatestPost = () => {
   const { data: post } = api.post.latest.useQuery();
@@ -15,12 +14,7 @@ export const LatestPost = () => {
 
       <div className="grid gap-3">
         <div className="flex items-center gap-6">
-          <Avatar className="h-12 w-12">
-            <AvatarImage src={post?.author.image ?? ""} />
-            <AvatarFallback>
-              {initialsFromName(post?.author.name)}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar src={post?.author.image} name={post?.author.name} className="h-12 w-12"/>
           <div className="grid">
             <span className="text-lg">{post?.author.name}</span>
             <span className="flex items-center gap-2 opacity-80">

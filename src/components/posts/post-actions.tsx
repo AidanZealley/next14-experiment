@@ -18,8 +18,8 @@ export const PostActions = ({ postId }: PostActionsProps) => {
   const utils = api.useUtils();
   const { mutate } = api.post.delete.useMutation({
     onSuccess: () => {
-      utils.post.all.invalidate();
       utils.post.latest.invalidate();
+      utils.post.infinite.invalidate();
     },
   });
   const handleDeleteClick = () => {

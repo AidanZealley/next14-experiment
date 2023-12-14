@@ -1,4 +1,4 @@
-import { createSSRHelpers } from "@/trpc/server";
+import { api, createSSRHelpers } from "@/trpc/server";
 import { dehydrate } from "@tanstack/react-query";
 import { ReactQueryHydrate } from "@/components/providers/react-query-hydrate";
 import { PostsList } from "@/components/posts/posts-list";
@@ -8,7 +8,9 @@ import { CreatePost } from "@/components/posts/create-post";
 export default async function Posts() {
   const helpers = await createSSRHelpers();
   await helpers.post.latest.prefetch();
-  await helpers.post.all.prefetch();
+  await helpers.post.infinite.prefetchInfinite({
+    limit: 2,
+  });
   const dehydratedState = dehydrate(helpers.queryClient);
 
   return (

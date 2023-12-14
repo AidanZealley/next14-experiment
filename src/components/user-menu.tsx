@@ -8,10 +8,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { initialsFromName } from "@/lib/utils";
 import { Session } from "next-auth";
 import Link from "next/link";
+import { UserAvatar } from "./user-avatar";
 
 type UserMenuProps = {
   session: Session | null;
@@ -23,12 +22,7 @@ export function UserMenu({ session }: UserMenuProps) {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="pl-2 pr-1">
           <span className="flex items-center gap-1">
-            <Avatar className="h-6 w-6">
-              <AvatarImage src={session?.user.image ?? ""} />
-              <AvatarFallback>
-                {initialsFromName(session?.user.name)}
-              </AvatarFallback>
-            </Avatar>
+            <UserAvatar src={session?.user.image} name={session?.user.name} className="h-6 w-6"/>
             <ChevronDown />
           </span>
         </Button>
