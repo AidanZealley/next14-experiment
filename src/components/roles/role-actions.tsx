@@ -9,7 +9,6 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -18,60 +17,61 @@ import {
 import { MoreVertical, Pencil, Trash } from "lucide-react";
 import { Button } from "../ui/button";
 import { api } from "@/trpc/react";
+import { RoleForm } from "./role-form";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { UpdateRoleSchema, updateRoleSchema } from "@/lib/schemas/role";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Role } from "@/server/db/schema";
+import { z } from "zod";
+import { RoleActionsMenu } from "./role-actions-menu";
 
 type RoleActionsProps = {
-  roleId: number;
+  role: Role;
 };
 
-export const RoleActions = ({ roleId }: RoleActionsProps) => {
+export const RoleActions = ({ role }: RoleActionsProps) => {
   const utils = api.useUtils();
-  const { mutate } = api.role.delete.useMutation({
-    onSuccess: () => {
+  const { mutate } = api.role.update.useMutation({
+    onSuccess() {
       utils.role.all.invalidate();
     },
   });
-  const handleDeleteClick = () => {
-    mutate({
-      id: roleId,
-    });
+  const { id } = role;
+  const form = useForm<UpdateRoleSchema>({
+    resolver: zodResolver(updateRoleSchema),
+    defaultValues: {
+      id,
+      name: role.name ?? "",
+    },
+  });
+  const onSubmit: SubmitHandler<UpdateRoleSchema> = (
+    values: z.infer<typeof updateRoleSchema>,
+    e,
+  ) => {
+    e?.preventDefault();
+    mutate(values);
   };
 
   return (
     <Dialog>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button size="icon" variant="ghost" className="h-8 w-8">
-            <MoreVertical className="h-3 w-3" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuItem onClick={handleDeleteClick}>
+      <RoleActionsMenu roleId={role.id}>
+        <DialogTrigger asChild>
+          <DropdownMenuItem>
             <span className="flex items-center gap-2">
-              <Trash className="h-3 w-3" />
-              <span>Delete</span>
+              <Pencil className="h-3 w-3" />
+              <span>Update</span>
             </span>
           </DropdownMenuItem>
-          <DialogTrigger asChild>
-            <DropdownMenuItem>
-              <span className="flex items-center gap-2">
-                <Pencil className="h-3 w-3" />
-                <span>Update</span>
-              </span>
-            </DropdownMenuItem>
-          </DialogTrigger>
-        </DropdownMenuContent>
-      </DropdownMenu>
+        </DialogTrigger>
+      </RoleActionsMenu>
 
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Update Role</DialogTitle>
-          <DialogDescription>
-            Make changes to the role and click save when you're done.
-          </DialogDescription>
         </DialogHeader>
-        Stuff
+        <RoleForm form={form} submitHandler={onSubmit} />
         <DialogFooter>
-          <Button type="submit">Save changes</Button>
+          <Button onClick={form.handleSubmit(onSubmit)}>Save changes</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

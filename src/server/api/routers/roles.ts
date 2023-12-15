@@ -2,12 +2,19 @@ import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import {
   createRoleSchema,
   deleteRoleSchema,
+  roleByIdSchema,
   updateRoleSchema,
 } from "@/lib/schemas/role";
 import { roles } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 
 export const roleRouter = createTRPCRouter({
+  byId: protectedProcedure.input(roleByIdSchema).query(({ ctx, input }) => {
+    return ctx.db.query.roles.findFirst({
+      where: eq(roles.id, input.id),
+    });
+  }),
+
   all: protectedProcedure.query(({ ctx }) => {
     return ctx.db.query.roles.findMany();
   }),

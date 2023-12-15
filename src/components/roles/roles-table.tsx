@@ -38,7 +38,7 @@ export const RolesTable = () => {
             <TableRow key={role.id}>
               <TableCell className="font-medium">{role.name}</TableCell>
               <TableCell className="text-right">
-                <RoleActions roleId={role.id} />
+                <RoleActions role={role} />
               </TableCell>
             </TableRow>
           ))}

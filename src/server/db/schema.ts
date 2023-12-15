@@ -70,6 +70,8 @@ export const roles = mysqlTable("role", {
   name: varchar("name", { length: 255 }),
 });
 
+export type Role = InferSelectModel<typeof roles>;
+
 export const rolesRelations = relations(roles, ({ many }) => ({
   userRoles: many(userRoles),
 }));

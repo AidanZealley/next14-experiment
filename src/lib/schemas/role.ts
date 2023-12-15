@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+export const roleByIdSchema = z.object({
+  id: z.number().min(1),
+});
+export type RoleByIdSchema = z.infer<typeof roleByIdSchema>;
+
 export const createRoleSchema = z.object({
   name: z
     .string()
