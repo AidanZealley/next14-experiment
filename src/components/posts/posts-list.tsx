@@ -3,12 +3,17 @@
 import { api } from "@/trpc/react";
 import { PostsListPage } from "./posts-list-page";
 import { Button } from "@/components/ui/button";
+import { StatusOverlay } from "@/components/status-overlay";
 
 export const PostsList = () => {
   const {
     data: infinitePages,
     hasNextPage,
     isFetchingNextPage,
+    isLoading,
+    isRefetching,
+    isError,
+    error,
     fetchNextPage,
   } = api.post.infinite.useInfiniteQuery(
     {
@@ -27,17 +32,26 @@ export const PostsList = () => {
   }
 
   return (
-    <>
-      {infinitePages.pages.map((page, index) => (
-        <PostsListPage postsPage={page.postsPage} key={index} />
-      ))}
+    <StatusOverlay
+      isLoading={isLoading}
+      isRefetching={isRefetching}
+      isError={isError}
+      error={error}
+    >
+      <div className="grid gap-12">
+        {infinitePages.pages.map((page, index) => (
+          <PostsListPage postsPage={page.postsPage} key={index} />
+        ))}
 
-      <Button
-        onClick={handleLoadMoreClick}
-        disabled={!hasNextPage || isFetchingNextPage}
-      >
-        Load More
-      </Button>
-    </>
+        {hasNextPage && (
+          <Button
+            onClick={handleLoadMoreClick}
+            disabled={!hasNextPage || isFetchingNextPage || isRefetching}
+          >
+            Load More
+          </Button>
+        )}
+      </div>
+    </StatusOverlay>
   );
 };

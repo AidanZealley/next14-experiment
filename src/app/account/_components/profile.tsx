@@ -1,5 +1,6 @@
 "use client";
 
+import { StatusOverlay } from "@/components/status-overlay";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { initialsFromName } from "@/lib/utils";
@@ -11,30 +12,34 @@ export const Profile = () => {
     data: signedInUser,
     isLoading,
     isRefetching,
+    isError,
+    error,
   } = api.user.signedInUser.useQuery();
 
   if (isLoading) {
     return <p>Loading...</p>;
   }
 
-  if (isRefetching) {
-    return <p>Refreshing...</p>;
-  }
-
   return (
-    <div className="grid grid-cols-[auto_1fr] gap-6">
-      <Avatar className="h-32 w-32 rounded-md">
-        <AvatarImage src={signedInUser?.image ?? ""} />
-        <AvatarFallback>{initialsFromName(signedInUser?.name)}</AvatarFallback>
-      </Avatar>
+    <StatusOverlay
+      isLoading={isLoading}
+      isRefetching={isRefetching}
+      isError={isError}
+      error={error}
+    >
+      <div className="grid grid-cols-[auto_1fr] gap-6">
+        <Avatar className="h-24 w-24">
+          <AvatarImage src={signedInUser?.image ?? ""} />
+          <AvatarFallback>
+            {initialsFromName(signedInUser?.name)}
+          </AvatarFallback>
+        </Avatar>
 
-      <div className="flex flex-col items-start gap-2 py-3">
-        <span className="text-xl font-bold">{signedInUser?.name}</span>
-        <span>{signedInUser?.email}</span>
-        <Button asChild>
-          <Link href="/account/settings">Edit Details</Link>
-        </Button>
+        <div className="flex flex-col items-start gap-2 py-3">
+          <span className="text-xl font-bold">{signedInUser?.name}</span>
+          <span>{signedInUser?.email}</span>
+        </div>
       </div>
-    </div>
+    </StatusOverlay>
   );
 };

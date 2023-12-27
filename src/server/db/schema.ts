@@ -1,6 +1,7 @@
 import { relations, sql, InferSelectModel } from "drizzle-orm";
 import {
   bigint,
+  boolean,
   index,
   int,
   mysqlTableCreator,
@@ -9,14 +10,9 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/mysql-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { type AdapterAccount } from "next-auth/adapters";
 
-/**
- * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
- * database instance for multiple projects.
- *
- * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
- */
 export const mysqlTable = mysqlTableCreator(
   (name) => `workout-planner_${name}`,
 );
@@ -26,7 +22,7 @@ export const posts = mysqlTable(
   {
     id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
     text: varchar("text", { length: 255 }),
-    authorId: varchar("authorId", { length: 255 }).notNull(),
+    userId: varchar("userId", { length: 255 }).notNull(),
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -34,12 +30,12 @@ export const posts = mysqlTable(
   },
   (post) => ({
     idIdx: index("id_idx").on(post.id),
-    authorIdIdx: index("authorId_idx").on(post.authorId),
+    userIdIdx: index("userId_idx").on(post.userId),
   }),
 );
 
 export const postsRelations = relations(posts, ({ one }) => ({
-  author: one(users, { fields: [posts.authorId], references: [users.id] }),
+  author: one(users, { fields: [posts.userId], references: [users.id] }),
 }));
 
 export type Post = InferSelectModel<typeof posts>;
@@ -54,38 +50,16 @@ export const users = mysqlTable("user", {
     fsp: 3,
   }).default(sql`CURRENT_TIMESTAMP(3)`),
   image: varchar("image", { length: 255 }),
+  isAdmin: boolean("isAdmin").default(false),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   sessions: many(sessions),
   posts: many(posts),
-  userRoles: many(userRoles),
 }));
 
 export type User = InferSelectModel<typeof users>;
-
-export const roles = mysqlTable("role", {
-  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-  name: varchar("name", { length: 255 }),
-});
-
-export type Role = InferSelectModel<typeof roles>;
-
-export const rolesRelations = relations(roles, ({ many }) => ({
-  userRoles: many(userRoles),
-}));
-
-export const userRoles = mysqlTable("userRole", {
-  id: bigint("id", { mode: "number" }).notNull().primaryKey(),
-  userId: varchar("userId", { length: 255 }).notNull(),
-  roleId: bigint("roleId", { mode: "number" }).notNull(),
-});
-
-export const userRolesRelations = relations(userRoles, ({ one }) => ({
-  role: one(roles),
-  user: one(users),
-}));
 
 export const accounts = mysqlTable(
   "account",

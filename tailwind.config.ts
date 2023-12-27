@@ -1,6 +1,6 @@
 const { fontFamily } = require("tailwindcss/defaultTheme");
 const plugin = require("tailwindcss/plugin");
-import { tab } from "./src/tailwind/tab";
+import { deviceHeight } from "./src/tailwind/device-height";
 import { spotlight } from "./src/tailwind/spotlight";
 
 /** @type {import('tailwindcss').Config} */
@@ -108,5 +108,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), plugin(tab), plugin(spotlight)],
+  plugins: [require("tailwindcss-animate"), plugin(deviceHeight)],
 };

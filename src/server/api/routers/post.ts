@@ -1,38 +1,14 @@
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-} from "@/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { posts, users } from "@/server/db/schema";
 import {
   createPostSchema,
   deletePostSchema,
   infinitePostsSchema,
 } from "@/lib/schemas/post";
-import { asc, desc, eq, gt, lt, lte } from "drizzle-orm";
+import { asc, desc, eq, gt, lte } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
-import { z } from "zod";
 
 export const postRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(
-      z
-        .object({
-          error: z.boolean(),
-        })
-        .nullish(),
-    )
-    .query(({ input }) => {
-      if (input?.error) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: `UNAUTHORIZED`,
-        });
-      }
-
-      return "Hello.";
-    }),
-
   all: protectedProcedure.query(({ ctx }) => {
     return ctx.db.query.posts.findMany({
       with: {
@@ -55,11 +31,10 @@ export const postRouter = createTRPCRouter({
       const postsPage = await ctx.db
         .select()
         .from(posts)
-        .innerJoin(users, eq(posts.authorId, users.id))
+        .leftJoin(users, eq(posts.userId, users.id))
         .orderBy(desc(posts.id))
         .limit(limit + 1)
         .where(lte(posts.id, cursor ?? lastPost?.id ?? 0));
-      console.log(postsPage);
       let nextCursor: typeof cursor | undefined = undefined;
       if (postsPage.length > limit) {
         const nextPage = postsPage[postsPage.length - 1];
@@ -78,7 +53,7 @@ export const postRouter = createTRPCRouter({
       const postsPage = await ctx.db
         .select()
         .from(posts)
-        .innerJoin(users, eq(posts.authorId, users.id))
+        .leftJoin(users, eq(posts.userId, users.id))
         .orderBy(asc(posts.id))
         .limit(limit + 1)
         .where(gt(posts.id, cursor ?? 0));
@@ -93,13 +68,18 @@ export const postRouter = createTRPCRouter({
       };
     }),
 
-  latest: protectedProcedure.query(({ ctx }) => {
-    return ctx.db.query.posts.findFirst({
+  latest: protectedProcedure.query(async ({ ctx }) => {
+    const data = await ctx.db.query.posts.findFirst({
       with: {
         author: true,
       },
       orderBy: (posts, { desc }) => [desc(posts.createdAt)],
     });
+
+    if (typeof data === "undefined") {
+      throw new TRPCError({ code: "NOT_FOUND" });
+    }
+    return data;
   }),
 
   create: protectedProcedure
@@ -107,7 +87,7 @@ export const postRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       await ctx.db.insert(posts).values({
         text: input.text,
-        authorId: ctx.session.user.id,
+        userId: ctx.session.user.id,
       });
     }),
 

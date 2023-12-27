@@ -36,16 +36,6 @@ export const MainNav = () => {
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
-        <NavigationMenuItem>
-          <Link href="/roles" legacyBehavior passHref>
-            <NavigationMenuLink
-              active={segment === "roles"}
-              className={navigationMenuTriggerStyle()}
-            >
-              Roles
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
   );

@@ -15,3 +15,6 @@ export const initialsFromName = (longName?: string | null) => {
 
   return initials;
 };
+
+export const wait = (delay: number) =>
+  new Promise((res) => setTimeout(() => res("done"), delay));

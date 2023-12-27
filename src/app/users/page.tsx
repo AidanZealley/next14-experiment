@@ -1,19 +1,17 @@
-import { createSSRHelpers } from "@/trpc/server";
-import { dehydrate } from "@tanstack/react-query";
-import { UsersTable } from "@/components/users/users-table";
-import { ReactQueryHydrate } from "@/components/providers/react-query-hydrate";
 import { SiteWrap } from "@/components/site-wrap";
+import { UsersTable, UsersTableFallback } from "./_components/users-table";
+import { Suspense } from "react";
 
 export default async function Home() {
-  const helpers = await createSSRHelpers();
-  await helpers.user.all.prefetch();
-  const dehydratedState = dehydrate(helpers.queryClient);
-
   return (
     <SiteWrap>
-      <ReactQueryHydrate state={dehydratedState}>
+      <div className="grid gap-3 py-6">
+        <h2 className="text-2xl font-extrabold">Users</h2>
+        <p className="prose">All registered users.</p>
+      </div>
+      <Suspense fallback={<UsersTableFallback />}>
         <UsersTable />
-      </ReactQueryHydrate>
+      </Suspense>
     </SiteWrap>
   );
 }

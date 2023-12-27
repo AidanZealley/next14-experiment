@@ -7,6 +7,7 @@ import { TRPCReactProvider } from "@/trpc/react";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SiteHeader } from "@/components/site-header";
 import { SiteWrap } from "@/components/site-wrap";
+import { DeviceHeightProvider } from "@/components/providers/device-height-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -34,12 +35,14 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div className="grid gap-6 pt-16">
-              <div className="fixed top-0 w-full backdrop-blur-sm">
-                <SiteHeader />
+            <DeviceHeightProvider>
+              <div className="grid gap-6 pt-16">
+                <div className="fixed top-0 w-full backdrop-blur-sm">
+                  <SiteHeader />
+                </div>
+                <div className="grid">{children}</div>
               </div>
-              <div>{children}</div>
-            </div>
+            </DeviceHeightProvider>
           </ThemeProvider>
         </TRPCReactProvider>
       </body>
