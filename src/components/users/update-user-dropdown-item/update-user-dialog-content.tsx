@@ -41,7 +41,7 @@ export const UpdateUserDialogContent = ({
     id: userId,
     name: user?.name ?? "",
     email: user?.email ?? "",
-    isAdmin: user?.isAdmin ?? "",
+    isAdmin: user?.isAdmin ?? false,
   };
   const form = useForm<UpdateUserSchema>({
     resolver: zodResolver(updateUserSchema),
@@ -63,7 +63,7 @@ export const UpdateUserDialogContent = ({
         isError={isError}
         error={error}
       >
-        <UserForm form={form} submitHandler={submitHandler} />
+        <UserForm user={user} form={form} submitHandler={submitHandler} />
       </StatusOverlay>
       <DialogFooter>
         <div className="flex w-full justify-between gap-6">

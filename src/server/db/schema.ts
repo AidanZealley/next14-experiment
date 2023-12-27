@@ -22,6 +22,7 @@ export const posts = mysqlTable(
     id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
     text: varchar("text", { length: 255 }),
     userId: varchar("userId", { length: 255 }).notNull(),
+    organisationId: varchar("userId", { length: 255 }).notNull(),
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -30,11 +31,16 @@ export const posts = mysqlTable(
   (post) => ({
     idIdx: index("id_idx").on(post.id),
     userIdIdx: index("userId_idx").on(post.userId),
+    organisationIdIdx: index("organisationId_idx").on(post.organisationId),
   }),
 );
 
 export const postsRelations = relations(posts, ({ one }) => ({
   author: one(users, { fields: [posts.userId], references: [users.id] }),
+  organisation: one(organisations, {
+    fields: [posts.organisationId],
+    references: [organisations.id],
+  }),
 }));
 
 export type Post = InferSelectModel<typeof posts>;
@@ -50,9 +56,16 @@ export const organisations = mysqlTable("organisation", {
   updatedAt: timestamp("updatedAt").onUpdateNow(),
 });
 
-export const organisationsRelations = relations(organisations, ({ one }) => ({
-  owner: one(users, { fields: [organisations.userId], references: [users.id] }),
-}));
+export const organisationsRelations = relations(
+  organisations,
+  ({ one, many }) => ({
+    owner: one(users, {
+      fields: [organisations.userId],
+      references: [users.id],
+    }),
+    posts: many(posts),
+  }),
+);
 
 export const users = mysqlTable("user", {
   id: varchar("id", { length: 255 }).notNull().primaryKey(),
