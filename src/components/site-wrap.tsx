@@ -8,7 +8,7 @@ type SiteWrapProps = {
 export const SiteWrap = ({ className, children }: SiteWrapProps) => {
   return (
     <div className={cn("flex justify-center px-6", className)}>
-      <div className="grid min-h-0 w-full max-w-7xl">{children}</div>
+      <div className="w-full max-w-7xl">{children}</div>
     </div>
   );
 };

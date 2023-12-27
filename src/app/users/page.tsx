@@ -11,7 +11,7 @@ export default async function Home() {
     return <NotSignedIn />;
   }
   return (
-    <SiteWrap>
+    <>
       <div className="grid gap-3 py-6">
         <h2 className="text-2xl font-extrabold">Users</h2>
         <p className="prose">All registered users.</p>
@@ -19,6 +19,6 @@ export default async function Home() {
       <Suspense fallback={<UsersTableFallback />}>
         <UsersTable />
       </Suspense>
-    </SiteWrap>
+    </>
   );
 }

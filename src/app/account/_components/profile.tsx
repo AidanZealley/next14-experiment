@@ -2,10 +2,8 @@
 
 import { StatusOverlay } from "@/components/status-overlay";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { initialsFromName } from "@/lib/utils";
 import { api } from "@/trpc/react";
-import Link from "next/link";
 
 export const Profile = () => {
   const {

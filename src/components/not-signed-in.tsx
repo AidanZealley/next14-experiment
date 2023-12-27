@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 export const NotSignedIn = () => {
   return (
     <SiteWrap>
-      <div className="grid min-h-0 place-items-center">
+      <div className="grid h-full min-h-0 place-items-center">
         <Alert className="max-w-xl">
           <div className="grid gap-6">
             <div className="grid gap-3">
