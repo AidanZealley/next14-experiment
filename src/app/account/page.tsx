@@ -5,11 +5,18 @@ import { createSSRHelpers } from "@/trpc/server";
 import { dehydrate } from "@tanstack/react-query";
 import { Suspense } from "react";
 import { ProfileFallback } from "./_components/profile-fallback";
+import { getServerAuthSession } from "@/server/auth";
+import { NotSignedIn } from "@/components/not-signed-in";
 
 export default async function AccountProfile() {
   const helpers = await createSSRHelpers();
   await helpers.user.signedInUser.prefetch();
   const dehydratedState = dehydrate(helpers.queryClient);
+  const signedInUser = await getServerAuthSession();
+
+  if (!signedInUser) {
+    return <NotSignedIn />;
+  }
 
   return (
     <div className="grid gap-8">

@@ -10,7 +10,6 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/mysql-core";
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { type AdapterAccount } from "next-auth/adapters";
 
 export const mysqlTable = mysqlTableCreator(
@@ -41,6 +40,20 @@ export const postsRelations = relations(posts, ({ one }) => ({
 export type Post = InferSelectModel<typeof posts>;
 export type PostwithAuthor = Post & { author: User };
 
+export const organisations = mysqlTable("organisation", {
+  id: varchar("id", { length: 255 }).notNull().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  userId: varchar("userId", { length: 255 }).notNull(),
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updatedAt").onUpdateNow(),
+});
+
+export const organisationsRelations = relations(organisations, ({ one }) => ({
+  owner: one(users, { fields: [organisations.userId], references: [users.id] }),
+}));
+
 export const users = mysqlTable("user", {
   id: varchar("id", { length: 255 }).notNull().primaryKey(),
   name: varchar("name", { length: 255 }),
@@ -56,6 +69,7 @@ export const users = mysqlTable("user", {
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   sessions: many(sessions),
+  organisations: many(organisations),
   posts: many(posts),
 }));
 
