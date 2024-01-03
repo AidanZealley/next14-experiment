@@ -26,6 +26,7 @@ export const MainNav = () => {
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
+
         <NavigationMenuItem>
           <Link href="/users" legacyBehavior passHref>
             <NavigationMenuLink
@@ -33,6 +34,17 @@ export const MainNav = () => {
               className={navigationMenuTriggerStyle()}
             >
               Users
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <Link href="/groups" legacyBehavior passHref>
+            <NavigationMenuLink
+              active={segment === "groups"}
+              className={navigationMenuTriggerStyle()}
+            >
+              Groups
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>

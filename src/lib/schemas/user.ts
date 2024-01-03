@@ -7,7 +7,7 @@ export type UserByIdSchema = z.infer<typeof userByIdSchema>;
 
 export const updateUserSchema = z.object({
   id: z.string().min(1),
-  name: z.string().min(2).max(255),
+  name: z.string().min(2).max(255).toUpperCase(),
   email: z.string().min(2).max(255),
   isAdmin: z.boolean(),
 });

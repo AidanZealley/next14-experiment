@@ -6,7 +6,6 @@ import { cookies } from "next/headers";
 import { TRPCReactProvider } from "@/trpc/react";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SiteHeader } from "@/components/site-header";
-import { SiteWrap } from "@/components/site-wrap";
 import { DeviceHeightProvider } from "@/components/providers/device-height-provider";
 
 const inter = Inter({
@@ -40,7 +39,7 @@ export default function RootLayout({
                 <div className="fixed top-0 w-full backdrop-blur-sm">
                   <SiteHeader />
                 </div>
-                <div className="grid">{children}</div>
+                {children}
               </div>
             </DeviceHeightProvider>
           </ThemeProvider>

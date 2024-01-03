@@ -1,4 +1,4 @@
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
+// import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import {
   getServerSession,
   type DefaultSession,
@@ -8,7 +8,8 @@ import GoogleProvider from "next-auth/providers/google";
 
 import { env } from "@/env";
 import { db } from "@/server/db";
-import { mysqlTable } from "@/server/db/schema";
+import { UserConfig } from "@/server/db/schema";
+import { DrizzleAdapter } from "./db/adapter";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -21,11 +22,13 @@ declare module "next-auth" {
     user: {
       id: string;
       isAdmin: boolean;
+      userConfig: UserConfig;
     } & DefaultSession["user"];
   }
 
   interface User {
-    isAdmin?: boolean;
+    isAdmin: boolean;
+    userConfig: UserConfig | null;
   }
 }
 
@@ -42,10 +45,12 @@ export const authOptions: NextAuthOptions = {
         ...session.user,
         id: user.id,
         isAdmin: user.isAdmin,
+        userConfig: user.userConfig,
       },
     }),
   },
-  adapter: DrizzleAdapter(db, mysqlTable),
+  // adapter: DrizzleAdapter(db, mysqlTable),
+  adapter: DrizzleAdapter(),
   providers: [
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,

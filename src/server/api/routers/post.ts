@@ -85,9 +85,14 @@ export const postRouter = createTRPCRouter({
   create: protectedProcedure
     .input(createPostSchema)
     .mutation(async ({ ctx, input }) => {
+      if (!ctx.session.user.userConfig.groupId) {
+        throw new TRPCError({ code: "BAD_REQUEST" });
+      }
+
       await ctx.db.insert(posts).values({
         text: input.text,
         userId: ctx.session.user.id,
+        groupId: ctx.session.user.userConfig.groupId,
       });
     }),
 

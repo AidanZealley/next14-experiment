@@ -59,14 +59,6 @@ const enforceUserIsOwner = enforceUserIsSignedIn.unstable_pipe((opts) => {
   return next();
 });
 
-export const enforceUserHasRoleSchema = z.object({
-  roleNames: z.string().array().min(1),
-});
-
-export type EnforceUserHasRoleOptions = {
-  allowedRoles: string[];
-};
-
 const enforceUserIsAdmin = enforceUserIsSignedIn.unstable_pipe(async (opts) => {
   const { ctx, next } = opts;
   const isAdmin = ctx.session.user.isAdmin;

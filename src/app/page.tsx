@@ -2,17 +2,13 @@ import { CreatePost } from "@/components/posts/create-post";
 import { LatestPost, LatestPostFallback } from "./_components/latest-post";
 import { Suspense } from "react";
 import { PostsList, PostsListFallback } from "./_components/posts-list";
-import { getServerAuthSession } from "@/server/auth";
-import { SiteWrap } from "@/components/site-wrap";
-import { Alert } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { NotSignedIn } from "@/components/not-signed-in";
+import { api } from "@/trpc/server";
 
 const LIMIT = 2;
 
 export default async function Home() {
-  const signedInUser = await getServerAuthSession();
+  const signedInUser = await api.user.signedInUser.query();
 
   if (!signedInUser) {
     return <NotSignedIn />;

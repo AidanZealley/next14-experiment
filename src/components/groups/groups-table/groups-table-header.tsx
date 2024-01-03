@@ -5,16 +5,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export const UsersTableHeader = () => {
+export const GroupsTableHeader = () => {
   return (
     <>
-      <TableCaption>A list of registered users.</TableCaption>
+      <TableCaption>A list of groups.</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead></TableHead>
           <TableHead>Name</TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead>Role</TableHead>
+          <TableHead>Owner</TableHead>
           <TableHead className="text-right">Actions</TableHead>
         </TableRow>
       </TableHeader>

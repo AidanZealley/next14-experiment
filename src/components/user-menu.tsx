@@ -1,3 +1,5 @@
+"use client";
+
 import { ChevronDown, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,21 +10,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Session } from "next-auth";
 import Link from "next/link";
 import { UserAvatar } from "./user-avatar";
+import { api } from "@/trpc/react";
 
-type UserMenuProps = {
-  session: Session | null;
-};
+export function UserMenu() {
+  const { data: signedInUser } = api.user.signedInUser.useQuery();
 
-export function UserMenu({ session }: UserMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="pl-2 pr-1">
           <span className="flex items-center gap-1">
-            <UserAvatar src={session?.user.image} name={session?.user.name} className="h-6 w-6"/>
+            <UserAvatar
+              src={signedInUser?.image}
+              name={signedInUser?.name}
+              className="h-6 w-6"
+            />
             <ChevronDown />
           </span>
         </Button>
