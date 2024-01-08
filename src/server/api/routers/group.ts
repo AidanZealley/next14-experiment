@@ -80,8 +80,6 @@ export const groupRouter = createTRPCRouter({
         where: eq(groups.id, input.groupId),
       });
 
-      console.log(group);
-
       if (!group) {
         throw new TRPCError({
           code: "NOT_FOUND",
@@ -140,7 +138,7 @@ export const groupRouter = createTRPCRouter({
       if (membership.userId === membership.group.userId) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Something went wrong.",
+          message: "The owner of a group can't leave.",
         });
       }
 

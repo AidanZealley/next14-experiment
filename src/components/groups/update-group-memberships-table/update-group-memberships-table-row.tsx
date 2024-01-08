@@ -14,14 +14,16 @@ export const UpdateGroupMembershipsTableRow = ({
   user,
   groupId,
 }: UpdateGroupMembershipsTableRowProps) => {
-  const isOwner = user.memberships.filter(
+  const isOwner = !!user.memberships.filter(
     (membership) =>
       membership.group.userId === user.id && membership.group.id === groupId,
-  );
-  const isMember = user.memberships.filter(
+  ).length;
+  const isMember = !!user.memberships.filter(
     (membership) => membership.groupId === groupId,
-  );
-  const isInvited = user.invites.filter((invite) => invite.groupId === groupId);
+  ).length;
+  const isInvited = !!user.invites.filter(
+    (invite) => invite.groupId === groupId,
+  ).length;
 
   return (
     <TableRow>
@@ -31,16 +33,22 @@ export const UpdateGroupMembershipsTableRow = ({
       <TableCell className="font-medium">
         <span className="flex items-center gap-3">
           {user.name}
-          {isOwner.length ? <Badge>Owner</Badge> : null}
+          {isOwner ? <Badge>Owner</Badge> : null}
         </span>
       </TableCell>
       <TableCell>{user.email}</TableCell>
       <TableCell>
-        {isMember.length ? <Badge>Member</Badge> : null}
-        {isInvited.length ? <Badge>Invited</Badge> : null}
+        {isMember ? <Badge>Member</Badge> : null}
+        {isInvited ? <Badge>Invited</Badge> : null}
       </TableCell>
       <TableCell className="text-right">
-        <UpdateGroupMembershipsActionsMenu userId={user.id} groupId={groupId} />
+        <UpdateGroupMembershipsActionsMenu
+          userId={user.id}
+          groupId={groupId}
+          isMember={isMember}
+          isInvited={isInvited}
+          isOwner={isOwner}
+        />
       </TableCell>
     </TableRow>
   );

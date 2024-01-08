@@ -12,7 +12,7 @@ import {
   DialogFooter,
   DialogOverlay,
   DialogTrigger,
-} from "../ui/dialog";
+} from "@/components/ui/dialog";
 import { useState } from "react";
 import { CreateGroupForm } from "./create-group-form";
 

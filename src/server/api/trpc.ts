@@ -4,7 +4,7 @@ import { z, ZodError } from "zod";
 
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
-import { groups, users } from "../db/schema";
+import { groups, invites, users } from "../db/schema";
 import { eq } from "drizzle-orm";
 import {
   withGroupIdSchema,
@@ -160,6 +160,41 @@ const enforceUserIsSelfOrAdmin = enforceUserIsSignedIn.unstable_pipe(
   },
 );
 
+const enforceUserIsInviteRecipient = enforceUserIsSignedIn.unstable_pipe(
+  async (opts) => {
+    const { ctx, rawInput, next } = opts;
+    const result = withIdSchema.parse(rawInput);
+    const inviteId = result.id;
+
+    if (!inviteId) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "This request was not valid.",
+      });
+    }
+
+    const invite = await ctx.db.query.invites.findFirst({
+      where: eq(invites.id, inviteId),
+    });
+
+    if (!invite) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "The invite was not found.",
+      });
+    }
+
+    if (ctx.session.user.id !== invite.userId) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "This action can only be performed by the invite owner.",
+      });
+    }
+
+    return next();
+  },
+);
+
 export const protectedProcedure = t.procedure.use(enforceUserIsSignedIn);
 export const protectedGroupOwnerProcedure = t.procedure.use(
   enforceUserIsGroupOwner,
@@ -170,4 +205,7 @@ export const protectedGroupMemberProcedure = t.procedure.use(
 export const protectedAdminProcedure = t.procedure.use(enforceUserIsAdmin);
 export const protectedSelfOrAdminProcedure = t.procedure.use(
   enforceUserIsSelfOrAdmin,
+);
+export const protectedInviteRecipientProcedure = t.procedure.use(
+  enforceUserIsInviteRecipient,
 );

@@ -14,6 +14,14 @@ type GroupsTableProps = {
 
 export const GroupsTable = ({ limit, children }: GroupsTableProps) => {
   const {
+    data: signedInUser,
+    isLoading: signedInUserLoading,
+    isRefetching: signedInUserIsRefetching,
+    isError: signedInUserIsError,
+    error: signedInUserError,
+  } = api.user.signedInUser.useQuery();
+
+  const {
     data: groups,
     isLoading,
     isRefetching,
@@ -23,10 +31,10 @@ export const GroupsTable = ({ limit, children }: GroupsTableProps) => {
 
   return (
     <StatusOverlay
-      isLoading={isLoading}
-      isRefetching={isRefetching}
-      isError={isError}
-      error={error}
+      isLoading={isLoading && signedInUserLoading}
+      isRefetching={isRefetching && signedInUserIsRefetching}
+      isError={isError || signedInUserIsError}
+      errors={[error, signedInUserError]}
     >
       <Table>
         {children}
@@ -44,14 +52,22 @@ export const GroupsTable = ({ limit, children }: GroupsTableProps) => {
                   <span>{group.owner?.name}</span>
                 </div>
               </TableCell>
-              <TableCell className="font-medium">
+              <TableCell>
                 <Badge>
                   {group.memberships.length} Member
                   {group.memberships.length > 1 ? "s" : ""}
                 </Badge>
               </TableCell>
               <TableCell className="text-right">
-                <GroupActionsMenu groupId={group.id} />
+                <GroupActionsMenu
+                  groupId={group.id}
+                  isMember={
+                    !!group.memberships.filter(
+                      (membership) => membership.userId === signedInUser?.id,
+                    ).length
+                  }
+                  isOwner={group.owner.id === signedInUser?.id}
+                />
               </TableCell>
             </TableRow>
           ))}

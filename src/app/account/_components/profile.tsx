@@ -23,7 +23,7 @@ export const Profile = () => {
       isLoading={isLoading}
       isRefetching={isRefetching}
       isError={isError}
-      error={error}
+      errors={[error]}
     >
       <div className="grid grid-cols-[auto_1fr] gap-6">
         <Avatar className="h-24 w-24">

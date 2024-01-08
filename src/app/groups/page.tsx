@@ -4,7 +4,7 @@ import { NotSignedIn } from "@/components/not-signed-in";
 import { CreateGroup } from "@/components/groups/create-group";
 import { api } from "@/trpc/server";
 
-export default async function Home() {
+export default async function GroupsHome() {
   const signedInUser = await api.user.signedInUser.query();
 
   if (!signedInUser) {

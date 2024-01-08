@@ -12,10 +12,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { UpdateUserSchema } from "@/lib/schemas/user";
 import { RouterOutputs } from "@/trpc/shared";
-import { Checkbox } from "../ui/checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type UserFormProps = {
-  user: RouterOutputs["user"]["byId"];
+  user: RouterOutputs["user"]["byId"] | null;
   form: UseFormReturn<UpdateUserSchema>;
   submitHandler: (values: UpdateUserSchema) => void;
 };

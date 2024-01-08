@@ -62,7 +62,7 @@ export const ProfileForm = () => {
       isLoading={isLoading}
       isRefetching={isRefetching}
       isError={isError}
-      error={error}
+      errors={[error]}
     >
       <div className="grid gap-6">
         <UserForm

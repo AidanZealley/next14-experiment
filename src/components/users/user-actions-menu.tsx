@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/trpc/react";
 import { useState } from "react";
 import { UpdateUserDropdownItem } from "@/components/users/update-user-dropdown-item";
-import { useToast } from "../ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { ConfirmationDialog } from "../confirmation-dialog";
 
 type UserActionsMenuProps = {

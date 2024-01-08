@@ -10,18 +10,24 @@ import { MoreVertical, UserMinus, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { api } from "@/trpc/react";
 import { useState } from "react";
-import { useToast } from "../ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { ConfirmationDialog } from "../confirmation-dialog";
 import { friendlyTRPCClientErrorCode } from "@/lib/utils";
 
 type UpdateGroupMembershipsActionsMenuProps = {
   groupId: string;
   userId: string;
+  isMember: boolean;
+  isInvited: boolean;
+  isOwner: boolean;
 };
 
 export const UpdateGroupMembershipsActionsMenu = ({
   groupId,
   userId,
+  isMember,
+  isInvited,
+  isOwner,
 }: UpdateGroupMembershipsActionsMenuProps) => {
   const [open, setOpen] = useState(false);
   const [confirmRemoveMemberOpen, setConfirmRemoveMemberOpen] = useState(false);
@@ -38,7 +44,7 @@ export const UpdateGroupMembershipsActionsMenu = ({
       toast({
         title: friendlyTRPCClientErrorCode(error, {
           UNAUTHORIZED: "Not Permitted",
-          NOT_FOUND: "Group Not Found",
+          NOT_FOUND: "Invite Not Found",
           BAD_REQUEST: "Request Error",
         }),
         description: error.message,
@@ -57,7 +63,7 @@ export const UpdateGroupMembershipsActionsMenu = ({
         toast({
           title: friendlyTRPCClientErrorCode(error, {
             UNAUTHORIZED: "Not Permitted",
-            NOT_FOUND: "Group Not Found",
+            NOT_FOUND: "Invite Not Found",
             BAD_REQUEST: "Request Error",
           }),
           description: error.message,
@@ -120,29 +126,40 @@ export const UpdateGroupMembershipsActionsMenu = ({
     <>
       <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
-          <Button size="icon" variant="ghost" className="h-8 w-8">
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-8 w-8"
+            disabled={!isInvited && isMember && isOwner}
+          >
             <MoreVertical className="h-3 w-3" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuItem onClick={handleInviteClick}>
-            <span className="flex items-center gap-2">
-              <UserPlus className="h-3 w-3" />
-              <span>Invite</span>
-            </span>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleRemoveInviteClick}>
-            <span className="flex items-center gap-2">
-              <UserMinus className="h-3 w-3" />
-              <span>Remove Invite</span>
-            </span>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleRemoveMemberClick}>
-            <span className="flex items-center gap-2">
-              <UserMinus className="h-3 w-3" />
-              <span>Remove From Group</span>
-            </span>
-          </DropdownMenuItem>
+          {!isMember && !isInvited && (
+            <DropdownMenuItem onClick={handleInviteClick}>
+              <span className="flex items-center gap-2">
+                <UserPlus className="h-3 w-3" />
+                <span>Invite</span>
+              </span>
+            </DropdownMenuItem>
+          )}
+          {isInvited && !isMember && (
+            <DropdownMenuItem onClick={handleRemoveInviteClick}>
+              <span className="flex items-center gap-2">
+                <UserMinus className="h-3 w-3" />
+                <span>Remove Invite</span>
+              </span>
+            </DropdownMenuItem>
+          )}
+          {isMember && !isOwner && (
+            <DropdownMenuItem onClick={handleRemoveMemberClick}>
+              <span className="flex items-center gap-2">
+                <UserMinus className="h-3 w-3" />
+                <span>Remove From Group</span>
+              </span>
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
       <ConfirmationDialog

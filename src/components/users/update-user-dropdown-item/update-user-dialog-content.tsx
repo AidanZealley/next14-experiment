@@ -80,7 +80,7 @@ export const UpdateUserDialogContent = ({
         isLoading={isLoading}
         isRefetching={isRefetching}
         isError={isError}
-        error={userByIdError}
+        errors={[userByIdError]}
       >
         <UserForm user={user} form={form} submitHandler={submitHandler} />
       </StatusOverlay>

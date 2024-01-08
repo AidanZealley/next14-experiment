@@ -1,14 +1,15 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AppRouter } from "@/server/api/root";
-import { TRPCClientError, TRPCClientErrorLike } from "@trpc/client";
+import { TRPCClientErrorLike } from "@trpc/client";
 import { TRPCError } from "@trpc/server";
 import { AlertCircle, Loader2 } from "lucide-react";
+import { Spinner } from "./spinner";
 
 type StatusOverlayProps = {
   isLoading?: boolean;
   isRefetching?: boolean;
   isError?: boolean;
-  error?: TRPCError | TRPCClientErrorLike<AppRouter> | null;
+  errors?: (TRPCError | TRPCClientErrorLike<AppRouter> | null)[];
   children: React.ReactNode;
 };
 
@@ -16,9 +17,11 @@ export const StatusOverlay = ({
   isLoading,
   isRefetching,
   isError,
-  error,
+  errors,
   children,
 }: StatusOverlayProps) => {
+  const validErrors = errors?.filter((error) => error !== null);
+
   return (
     <div className="relative">
       {!isError && (
@@ -35,7 +38,7 @@ export const StatusOverlay = ({
           {isLoading && <Loader2 className="h-8 w-8 animate-spin" />}
           {isRefetching && (
             <div className="grid h-full w-full place-items-center backdrop-blur-sm">
-              <Loader2 className="h-8 w-8 animate-spin" />
+              <Spinner />
             </div>
           )}
           {isError && (
@@ -44,7 +47,11 @@ export const StatusOverlay = ({
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Oops</AlertTitle>
                 <AlertDescription>
-                  <p>{error ? error.message : "Something went wrong."}</p>
+                  {validErrors?.length
+                    ? validErrors.map((error) => (
+                        <p>{error?.message ?? "Something went wrong."}</p>
+                      ))
+                    : null}
                 </AlertDescription>
               </Alert>
             </div>

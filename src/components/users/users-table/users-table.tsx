@@ -26,14 +26,14 @@ export const UsersTable = ({ limit, children }: UsersTableProps) => {
       isLoading={isLoading}
       isRefetching={isRefetching}
       isError={isError}
-      error={error}
+      errors={[error]}
     >
       <Table>
         {children}
         <TableBody>
           {users?.map((user) => (
             <TableRow key={user.id}>
-              <TableCell>
+              <TableCell className="w-6">
                 <UserAvatar
                   src={user.image}
                   name={user.name}

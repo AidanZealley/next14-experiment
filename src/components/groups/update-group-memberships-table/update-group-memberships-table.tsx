@@ -29,7 +29,7 @@ export const UpdateGroupMembershipsTable = ({
       isLoading={isLoading}
       isRefetching={isRefetching}
       isError={isError}
-      error={error}
+      errors={[error]}
     >
       <Table>
         {children}

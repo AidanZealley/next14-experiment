@@ -20,7 +20,7 @@ export const LatestPost = () => {
       isLoading={isLoading}
       isRefetching={isRefetching}
       isError={isError}
-      error={error}
+      errors={[error]}
     >
       <div className="grid min-h-[50vh] w-full place-items-center px-6 py-16">
         <div className="grid w-full max-w-5xl gap-6">

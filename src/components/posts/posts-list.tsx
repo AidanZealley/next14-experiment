@@ -36,7 +36,7 @@ export const PostsList = () => {
       isLoading={isLoading}
       isRefetching={isRefetching}
       isError={isError}
-      error={error}
+      errors={[error]}
     >
       <div className="grid gap-12">
         {infinitePages.pages.map((page, index) => (

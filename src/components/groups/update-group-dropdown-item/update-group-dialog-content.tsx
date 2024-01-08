@@ -76,7 +76,7 @@ export const UpdateGroupDialogContent = ({
         isLoading={isLoading}
         isRefetching={isRefetching}
         isError={isError}
-        error={groupByIdError}
+        errors={[groupByIdError]}
       >
         <UpdateGroupForm form={form} submitHandler={submitHandler} />
       </StatusOverlay>

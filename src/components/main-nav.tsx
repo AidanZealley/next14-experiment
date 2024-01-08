@@ -9,6 +9,9 @@ import {
 } from "@/components/ui/navigation-menu";
 import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
+import { Badge } from "./ui/badge";
+import { cn } from "@/lib/utils";
+import { InvitesBadge } from "./invites/invites-badge";
 
 export const MainNav = () => {
   const segment = useSelectedLayoutSegment();
@@ -45,6 +48,21 @@ export const MainNav = () => {
               className={navigationMenuTriggerStyle()}
             >
               Groups
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <Link href="/invites" legacyBehavior passHref>
+            <NavigationMenuLink
+              active={segment === "invites"}
+              className={cn([
+                "flex items-center gap-2",
+                navigationMenuTriggerStyle(),
+              ])}
+            >
+              Invites
+              <InvitesBadge />
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
