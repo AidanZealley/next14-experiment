@@ -5,15 +5,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export const GroupsTableHeader = () => {
+export const UpdateGroupMembershipsTableHeader = () => {
   return (
     <>
-      <TableCaption>A list of groups.</TableCaption>
+      <TableCaption>
+        A list of users and their membership status to the group.
+      </TableCaption>
       <TableHeader>
         <TableRow>
+          <TableHead></TableHead>
           <TableHead>Name</TableHead>
-          <TableHead>Owner</TableHead>
-          <TableHead>Members</TableHead>
+          <TableHead>Email</TableHead>
+          <TableHead>Status</TableHead>
           <TableHead className="text-right">Actions</TableHead>
         </TableRow>
       </TableHeader>

@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { DialogDropdownItem } from "@/components/dialog-dropdown-item";
-import { UpdateGroupDialogContent } from "./";
-import { Cog } from "lucide-react";
+import { UpdateGroupMembershipsDialogContent } from ".";
+import { Users } from "lucide-react";
 import { wait } from "@/lib/utils";
 
-type UpdateGroupDropdownItemProps = {
+type UpdateGroupMembershipsDropdownItemProps = {
   groupId: string;
   closeHandler?: () => void;
 };
 
-export const UpdateGroupDropdownItem = ({
+export const UpdateGroupMembershipsDropdownItem = ({
   groupId,
   closeHandler,
-}: UpdateGroupDropdownItemProps) => {
+}: UpdateGroupMembershipsDropdownItemProps) => {
   const [open, setOpen] = useState(false);
   const dialogCloseHandler = async () => {
     setOpen(false);
@@ -24,9 +24,12 @@ export const UpdateGroupDropdownItem = ({
     <DialogDropdownItem
       open={open}
       onOpenChange={setOpen}
-      triggerChildren={<UpdateGroupDropdownItemTrigger />}
+      triggerChildren={<UpdateGroupMembershipsDropdownItemTrigger />}
+      contentProps={{
+        className: "max-w-3xl",
+      }}
     >
-      <UpdateGroupDialogContent
+      <UpdateGroupMembershipsDialogContent
         groupId={groupId}
         closeHandler={dialogCloseHandler}
       />
@@ -34,11 +37,11 @@ export const UpdateGroupDropdownItem = ({
   );
 };
 
-const UpdateGroupDropdownItemTrigger = () => {
+const UpdateGroupMembershipsDropdownItemTrigger = () => {
   return (
     <span className="flex items-center gap-2">
-      <Cog className="h-3 w-3" />
-      <span>Update Group</span>
+      <Users className="h-3 w-3" />
+      <span>Update Group Memberships</span>
     </span>
   );
 };

@@ -9,10 +9,12 @@ import { DropdownMenuItem } from "./ui/dropdown-menu";
 
 type DialogDropdownItemProps = DialogPrimitive.DialogProps & {
   triggerChildren: React.ReactNode;
+  contentProps?: DialogPrimitive.DialogContentProps;
 };
 
 export const DialogDropdownItem = ({
   triggerChildren,
+  contentProps,
   children,
   ...props
 }: DialogDropdownItemProps) => {
@@ -28,7 +30,7 @@ export const DialogDropdownItem = ({
         </DropdownMenuItem>
       </DialogTrigger>
       <DialogOverlay />
-      <DialogContent>{children}</DialogContent>
+      <DialogContent {...contentProps}>{children}</DialogContent>
     </Dialog>
   );
 };

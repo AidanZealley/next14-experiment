@@ -8,6 +8,7 @@ import {
   primaryKey,
   text,
   timestamp,
+  uniqueIndex,
   varchar,
 } from "drizzle-orm/mysql-core";
 import { type AdapterAccount } from "next-auth/adapters";
@@ -26,7 +27,9 @@ export const posts = mysqlTable(
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    updatedAt: timestamp("updatedAt").onUpdateNow(),
+    updatedAt: timestamp("updatedAt")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .onUpdateNow(),
   },
   (post) => ({
     idIdx: index("id_idx").on(post.id),
@@ -54,7 +57,9 @@ export const groups = mysqlTable("group", {
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  updatedAt: timestamp("updatedAt").onUpdateNow(),
+  updatedAt: timestamp("updatedAt")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .onUpdateNow(),
 });
 
 export const groupsRelations = relations(groups, ({ one, many }) => ({
@@ -70,16 +75,17 @@ export const groupsRelations = relations(groups, ({ one, many }) => ({
 export const memberships = mysqlTable(
   "membership",
   {
-    id: varchar("id", { length: 255 }).notNull().primaryKey(),
     userId: varchar("userId", { length: 255 }).notNull(),
     groupId: varchar("groupId", { length: 255 }).notNull(),
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    updatedAt: timestamp("updatedAt").onUpdateNow(),
+    updatedAt: timestamp("updatedAt")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .onUpdateNow(),
   },
   (membership) => ({
-    idIdx: index("id_idx").on(membership.id),
+    compoundKey: primaryKey(membership.userId, membership.groupId),
     userIdIdx: index("userId_idx").on(membership.userId),
     groupIdIdx: index("groupId_idx").on(membership.groupId),
   }),
@@ -92,6 +98,47 @@ export const membershipsRelations = relations(memberships, ({ one }) => ({
   }),
   group: one(groups, {
     fields: [memberships.groupId],
+    references: [groups.id],
+  }),
+}));
+
+export const invites = mysqlTable(
+  "invite",
+  {
+    id: varchar("id", { length: 255 }).notNull().primaryKey(),
+    userId: varchar("userId", { length: 255 }).notNull(),
+    groupId: varchar("groupId", { length: 255 }).notNull(),
+    invitedBy: varchar("invitedBy", { length: 255 }).notNull(),
+    createdAt: timestamp("created_at")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updatedAt")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .onUpdateNow(),
+  },
+  (invite) => ({
+    userIdGroupIdIdx: uniqueIndex("userId_groupId_idx").on(
+      invite.userId,
+      invite.groupId,
+    ),
+    userIdIdx: index("userId_idx").on(invite.userId),
+    groupIdIdx: index("groupId_idx").on(invite.groupId),
+  }),
+);
+
+export const invitesRelations = relations(invites, ({ one }) => ({
+  user: one(users, {
+    fields: [invites.userId],
+    references: [users.id],
+    relationName: "invites",
+  }),
+  invitedBy: one(users, {
+    fields: [invites.invitedBy],
+    references: [users.id],
+    relationName: "sentInvites",
+  }),
+  group: one(groups, {
+    fields: [invites.groupId],
     references: [groups.id],
   }),
 }));
@@ -113,6 +160,12 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   accounts: many(accounts),
   sessions: many(sessions),
   groups: many(groups),
+  invites: many(invites, {
+    relationName: "invites",
+  }),
+  sentInvites: many(invites, {
+    relationName: "sentInvites",
+  }),
   posts: many(posts),
   memberships: many(memberships),
   userConfig: one(userConfigs, {
@@ -149,17 +202,6 @@ export const userConfigRelations = relations(userConfigs, ({ one }) => ({
 }));
 
 export type UserConfig = InferSelectModel<typeof userConfigs>;
-
-// export const userOrgConfig = mysqlTable(
-//   "userOrgConfig",
-//   {
-//     userId: varchar("userId", { length: 255 }).notNull(),
-//     groupId: varchar("id", { length: 255 }),
-//   },
-//   (urc) => ({
-//     compoundKey: primaryKey(urc.userId, urc.groupId),
-//   }),
-// );
 
 export const accounts = mysqlTable(
   "account",

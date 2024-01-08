@@ -18,7 +18,6 @@ export function DrizzleAdapter(): Adapter {
 
       const userId = crypto.randomUUID();
       const groupId = crypto.randomUUID();
-      const membershipId = crypto.randomUUID();
       const userConfigId = crypto.randomUUID();
 
       await db.transaction(async (tx) => {
@@ -26,9 +25,7 @@ export function DrizzleAdapter(): Adapter {
         await tx
           .insert(groups)
           .values({ id: groupId, name: "Home", userId, isPersonal: true });
-        await tx
-          .insert(memberships)
-          .values({ id: membershipId, userId, groupId });
+        await tx.insert(memberships).values({ userId, groupId });
         await tx
           .insert(userConfigs)
           .values({ id: userConfigId, userId, groupId });

@@ -4,6 +4,13 @@ import { z, ZodError } from "zod";
 
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
+import { groups, users } from "../db/schema";
+import { eq } from "drizzle-orm";
+import {
+  withGroupIdSchema,
+  withIdSchema,
+  withUserIdSchema,
+} from "@/lib/schemas";
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await getServerAuthSession();
@@ -44,20 +51,82 @@ const enforceUserIsSignedIn = t.middleware(({ ctx, next }) => {
   });
 });
 
-export const enforceUserIsOwnerSchema = z
-  .object({ userId: z.string().min(1) })
-  .partial();
+const enforceUserIsGroupOwner = enforceUserIsSignedIn.unstable_pipe(
+  async (opts) => {
+    const { ctx, rawInput, next } = opts;
+    const result = withIdSchema.parse(rawInput);
+    const groupId = result.id;
 
-const enforceUserIsOwner = enforceUserIsSignedIn.unstable_pipe((opts) => {
-  const { ctx, rawInput, next } = opts;
-  const result = enforceUserIsOwnerSchema.parse(rawInput);
+    if (!groupId) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "This request was not valid.",
+      });
+    }
 
-  if (ctx.session.user.id !== result.userId) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
+    const group = await ctx.db.query.groups.findFirst({
+      where: eq(groups.id, groupId),
+    });
 
-  return next();
-});
+    if (!group) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "The group was not found.",
+      });
+    }
+
+    if (ctx.session.user.id !== group.userId) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "This action can only be performed by the group owner.",
+      });
+    }
+
+    return next();
+  },
+);
+
+const enforceUserIsGroupMember = enforceUserIsSignedIn.unstable_pipe(
+  async (opts) => {
+    const { ctx, rawInput, next } = opts;
+    const result = withGroupIdSchema.parse(rawInput);
+    const groupId = result.groupId;
+
+    if (!groupId) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "This request was not valid.",
+      });
+    }
+
+    const group = await ctx.db.query.groups.findFirst({
+      where: eq(groups.id, groupId),
+      with: {
+        memberships: true,
+      },
+    });
+
+    if (!group) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "The group was not found.",
+      });
+    }
+
+    const isMember = group.memberships.filter(
+      (membership) => membership.userId === ctx.session.user.id,
+    );
+
+    if (!isMember) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "This action can only be performed by a group member.",
+      });
+    }
+
+    return next();
+  },
+);
 
 const enforceUserIsAdmin = enforceUserIsSignedIn.unstable_pipe(async (opts) => {
   const { ctx, next } = opts;
@@ -70,6 +139,35 @@ const enforceUserIsAdmin = enforceUserIsSignedIn.unstable_pipe(async (opts) => {
   return next();
 });
 
+const enforceUserIsSelfOrAdmin = enforceUserIsSignedIn.unstable_pipe(
+  async (opts) => {
+    const { ctx, rawInput, next } = opts;
+
+    if (ctx.session.user.isAdmin) {
+      return next();
+    }
+
+    const result = withIdSchema.parse(rawInput);
+
+    if (ctx.session.user.id !== result.id) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "This action can only be performed by that user or an admin.",
+      });
+    }
+
+    return next();
+  },
+);
+
 export const protectedProcedure = t.procedure.use(enforceUserIsSignedIn);
-export const protectedOwnerProcedure = t.procedure.use(enforceUserIsOwner);
-export const protectedAuthorisedProcedure = t.procedure.use(enforceUserIsAdmin);
+export const protectedGroupOwnerProcedure = t.procedure.use(
+  enforceUserIsGroupOwner,
+);
+export const protectedGroupMemberProcedure = t.procedure.use(
+  enforceUserIsGroupMember,
+);
+export const protectedAdminProcedure = t.procedure.use(enforceUserIsAdmin);
+export const protectedSelfOrAdminProcedure = t.procedure.use(
+  enforceUserIsSelfOrAdmin,
+);

@@ -34,7 +34,7 @@ export const CreateGroup = () => {
   const { mutate, isLoading } = api.group.create.useMutation({
     onSuccess() {
       utils.group.all.invalidate();
-      reset();
+      closeHandler();
     },
   });
 

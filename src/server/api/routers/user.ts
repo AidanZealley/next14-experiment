@@ -1,6 +1,7 @@
 import {
   createTRPCRouter,
   protectedProcedure,
+  protectedSelfOrAdminProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
 import {
@@ -30,6 +31,19 @@ export const userRouter = createTRPCRouter({
     return ctx.db.query.users.findMany();
   }),
 
+  allWithMembershipsAndInvites: protectedProcedure.query(({ ctx }) => {
+    return ctx.db.query.users.findMany({
+      with: {
+        memberships: {
+          with: {
+            group: true,
+          },
+        },
+        invites: true,
+      },
+    });
+  }),
+
   signedInUser: publicProcedure.query(({ ctx }) => {
     if (!ctx.session || !ctx.session.user) {
       return null;
@@ -45,13 +59,13 @@ export const userRouter = createTRPCRouter({
     });
   }),
 
-  update: protectedProcedure
+  update: protectedSelfOrAdminProcedure
     .input(updateUserSchema)
     .mutation(async ({ ctx, input }) => {
       await ctx.db.update(users).set(input).where(eq(users.id, input.id));
     }),
 
-  delete: protectedProcedure
+  delete: protectedSelfOrAdminProcedure
     .input(deleteUserSchema)
     .mutation(async ({ ctx, input }) => {
       try {

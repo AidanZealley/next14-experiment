@@ -7,6 +7,7 @@ import { TRPCReactProvider } from "@/trpc/react";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SiteHeader } from "@/components/site-header";
 import { DeviceHeightProvider } from "@/components/providers/device-height-provider";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -41,6 +42,7 @@ export default function RootLayout({
                 </div>
                 {children}
               </div>
+              <Toaster />
             </DeviceHeightProvider>
           </ThemeProvider>
         </TRPCReactProvider>
