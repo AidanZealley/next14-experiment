@@ -28,11 +28,13 @@ export default async function Home() {
               <CreatePost />
             </div>
 
-            <Suspense
-              fallback={<PostsListFallback limit={INFINITE_POSTS_LIMIT} />}
-            >
-              <PostsList limit={INFINITE_POSTS_LIMIT} />
-            </Suspense>
+            <div className="pb-16">
+              <Suspense
+                fallback={<PostsListFallback limit={INFINITE_POSTS_LIMIT} />}
+              >
+                <PostsList limit={INFINITE_POSTS_LIMIT} />
+              </Suspense>
+            </div>
           </div>
         </div>
       </div>
