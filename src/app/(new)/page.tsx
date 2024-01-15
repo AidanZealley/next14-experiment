@@ -14,7 +14,7 @@ export default async function Home() {
   }
 
   return (
-    <>
+    <div className="grid">
       <div className="grid min-h-[25vh]">
         <Suspense fallback={<LatestPostFallback />}>
           <LatestPost />
@@ -36,6 +36,6 @@ export default async function Home() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

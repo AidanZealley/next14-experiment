@@ -19,7 +19,7 @@ export function TRPCReactProvider(props: {
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 0,
+            staleTime: 60 * 1000,
             retry: false,
           },
         },
