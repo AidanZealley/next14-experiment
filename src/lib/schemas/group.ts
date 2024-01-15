@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { withIdSchema } from ".";
+import { withGroupIdSchema, withIdSchema } from ".";
 
 export const groupByIdSchema = z.object({
   id: z.string().min(1),
@@ -32,7 +32,7 @@ export const leaveGroupSchema = z.object({
 });
 export type LeaveGroupSchema = z.infer<typeof leaveGroupSchema>;
 
-export const deleteGroupInviteSchema = withIdSchema.extend({
+export const deleteGroupInviteSchema = z.object({
   groupId: z.string().min(1).max(255),
   userId: z.string().min(1).max(255),
 });

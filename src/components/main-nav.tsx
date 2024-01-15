@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/navigation-menu";
 import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
-import { Badge } from "./ui/badge";
 import { cn } from "@/lib/utils";
 import { InvitesBadge } from "./invites/invites-badge";
 

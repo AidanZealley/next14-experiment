@@ -12,7 +12,7 @@ import { api } from "@/trpc/react";
 import { useState } from "react";
 import { UpdateGroupDropdownItem } from "@/components/groups/update-group-dropdown-item";
 import { useToast } from "@/components/ui/use-toast";
-import { ConfirmationDialog } from "../confirmation-dialog";
+import { ConfirmationDialog } from "@/components/confirmation-dialog";
 import { friendlyTRPCClientErrorCode } from "@/lib/utils";
 import { UpdateGroupMembershipsDropdownItem } from "./update-group-memberships-dropdown-item";
 

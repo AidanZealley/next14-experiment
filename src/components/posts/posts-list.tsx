@@ -4,6 +4,7 @@ import { api } from "@/trpc/react";
 import { PostsListPage } from "./posts-list-page";
 import { Button } from "@/components/ui/button";
 import { StatusOverlay } from "@/components/status-overlay";
+import { INFINITE_POSTS_LIMIT } from "@/app/constants";
 
 export const PostsList = () => {
   const {
@@ -17,7 +18,7 @@ export const PostsList = () => {
     fetchNextPage,
   } = api.post.infinite.useInfiniteQuery(
     {
-      limit: 2,
+      limit: INFINITE_POSTS_LIMIT,
     },
     {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
@@ -27,19 +28,16 @@ export const PostsList = () => {
     fetchNextPage();
   };
 
-  if (!infinitePages) {
-    return <p>No data.</p>;
-  }
-
   return (
     <StatusOverlay
       isLoading={isLoading}
       isRefetching={isRefetching}
       isError={isError}
       errors={[error]}
+      notFoundFallback={<PostsListFallback />}
     >
       <div className="grid gap-12">
-        {infinitePages.pages.map((page, index) => (
+        {infinitePages?.pages.map((page, index) => (
           <PostsListPage postsPage={page.postsPage} key={index} />
         ))}
 
@@ -53,5 +51,13 @@ export const PostsList = () => {
         )}
       </div>
     </StatusOverlay>
+  );
+};
+
+const PostsListFallback = () => {
+  return (
+    <div className="grid w-full place-items-center px-6">
+      <p className="text-xl font-extrabold opacity-30">No posts yet 😞</p>
+    </div>
   );
 };

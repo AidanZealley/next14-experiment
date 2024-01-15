@@ -1,7 +1,6 @@
 const { fontFamily } = require("tailwindcss/defaultTheme");
 const plugin = require("tailwindcss/plugin");
 import { deviceHeight } from "./src/tailwind/device-height";
-import { spotlight } from "./src/tailwind/spotlight";
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -13,13 +12,6 @@ module.exports = {
     "./src/**/*.{ts,tsx}",
   ],
   theme: {
-    spotlight: {},
-    tabSize: {
-      1: "1",
-      2: "2",
-      4: "4",
-      8: "8",
-    },
     container: {
       center: true,
       padding: "2rem",

@@ -12,7 +12,7 @@ import { api } from "@/trpc/react";
 import { useState } from "react";
 import { UpdateUserDropdownItem } from "@/components/users/update-user-dropdown-item";
 import { useToast } from "@/components/ui/use-toast";
-import { ConfirmationDialog } from "../confirmation-dialog";
+import { ConfirmationDialog } from "@/components/confirmation-dialog";
 
 type UserActionsMenuProps = {
   userId: string;

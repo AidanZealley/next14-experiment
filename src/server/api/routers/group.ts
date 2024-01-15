@@ -3,7 +3,13 @@ import {
   protectedGroupOwnerProcedure,
   protectedProcedure,
 } from "@/server/api/trpc";
-import { groups, invites, memberships } from "@/server/db/schema";
+import {
+  Group,
+  groups,
+  invites,
+  memberships,
+  userConfigs,
+} from "@/server/db/schema";
 import {
   createGroupSchema,
   deleteGroupInviteSchema,
@@ -34,6 +40,46 @@ export const groupRouter = createTRPCRouter({
     });
   }),
 
+  signedInUserGroups: protectedProcedure.query(async ({ ctx }) => {
+    const allGroups = await ctx.db.query.groups.findMany({
+      where: eq(groups.userId, ctx.session.user.id),
+      orderBy: (groups, { desc }) => [desc(groups.updatedAt)],
+    });
+
+    type GroupWithSelected = Group & {
+      isSelected: boolean;
+    };
+
+    return allGroups.reduce<{
+      personal: GroupWithSelected;
+      groups: GroupWithSelected[];
+    }>(
+      (sortedGroups, group) =>
+        group.isPersonal
+          ? {
+              ...sortedGroups,
+              personal: {
+                ...group,
+                isSelected: group.id === ctx.session.user.userConfig.groupId,
+              },
+            }
+          : {
+              ...sortedGroups,
+              groups: [
+                ...sortedGroups.groups,
+                {
+                  ...group,
+                  isSelected: group.id === ctx.session.user.userConfig.groupId,
+                },
+              ],
+            },
+      {
+        personal: {} as GroupWithSelected,
+        groups: [],
+      },
+    );
+  }),
+
   personalGroup: protectedProcedure.query(({ ctx }) => {
     return ctx.db.query.groups.findFirst({
       where: and(
@@ -56,6 +102,9 @@ export const groupRouter = createTRPCRouter({
         });
         await tx.insert(memberships).values({
           userId: ctx.session.user.id,
+          groupId: groupId,
+        });
+        await tx.update(userConfigs).set({
           groupId: groupId,
         });
       });

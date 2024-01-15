@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export const LatestPostFallback = () => {
   return (
-    <div className="grid min-h-[50vh] w-full place-items-center px-6 py-16">
+    <div className="grid w-full place-items-center px-6 pt-16">
       <div className="grid w-full max-w-5xl gap-6">
         <Skeleton className="h-16 w-full" />
 

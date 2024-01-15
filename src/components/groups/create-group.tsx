@@ -6,17 +6,24 @@ import { z } from "zod";
 import { CreateGroupSchema, createGroupSchema } from "@/lib/schemas/group";
 import { api } from "@/trpc/react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogOverlay,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { useState } from "react";
 import { CreateGroupForm } from "./create-group-form";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 
-export const CreateGroup = () => {
+type CreateGroupProps = {
+  children?: React.ReactNode;
+};
+
+export const CreateGroup = ({ children }: CreateGroupProps) => {
   const [open, setOpen] = useState(false);
 
   const form = useForm<CreateGroupSchema>({
@@ -45,9 +52,9 @@ export const CreateGroup = () => {
 
   const submitHandler: SubmitHandler<CreateGroupSchema> = (
     values: z.infer<typeof createGroupSchema>,
-    e,
+    event,
   ) => {
-    e?.preventDefault();
+    event?.preventDefault();
     if (!isDirty || isLoading) {
       return;
     }
@@ -56,22 +63,32 @@ export const CreateGroup = () => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>Create Group</Button>
-      </DialogTrigger>
-      <DialogOverlay />
-      <DialogContent>
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger asChild>
+        {children ? children : <Button>Create Group</Button>}
+      </DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>Add Group</DrawerTitle>
+          <DrawerDescription>
+            Create a new group and invite people.
+          </DrawerDescription>
+        </DrawerHeader>
+
         <CreateGroupForm form={form} submitHandler={submitHandler} />
-        <DialogFooter>
+
+        <DrawerFooter>
           <div className="flex w-full justify-between gap-6">
-            <Button onClick={closeHandler}>Cancel</Button>
+            <DrawerClose onClick={closeHandler}>
+              <Button>Cancel</Button>
+            </DrawerClose>
             <Button onClick={handleSubmit(submitHandler)} disabled={isLoading}>
               {isLoading ? "Creating" : "Create Group"}
             </Button>
           </div>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <Button>Submit</Button>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 };

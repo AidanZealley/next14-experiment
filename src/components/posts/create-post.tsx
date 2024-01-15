@@ -37,9 +37,9 @@ export const CreatePost = () => {
 
   const onSubmit: SubmitHandler<CreatePostSchema> = (
     values: z.infer<typeof createPostSchema>,
-    e,
+    event,
   ) => {
-    e?.preventDefault();
+    event?.preventDefault();
     if (!isDirty || isLoading) {
       return;
     }

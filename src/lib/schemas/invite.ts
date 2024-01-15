@@ -7,12 +7,8 @@ export const createInviteSchema = z.object({
 });
 export type CreateInviteSchema = z.infer<typeof createInviteSchema>;
 
-export const acceptInviteSchema = withIdSchema.extend({
-  id: z.string().min(1).max(255),
-});
+export const acceptInviteSchema = withIdSchema;
 export type AcceptInviteSchema = z.infer<typeof acceptInviteSchema>;
 
-export const deleteInviteSchema = withIdSchema.extend({
-  id: z.string().min(1).max(255),
-});
+export const deleteInviteSchema = withIdSchema;
 export type DeleteInviteSchema = z.infer<typeof deleteInviteSchema>;

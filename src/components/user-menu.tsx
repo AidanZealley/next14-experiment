@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, LogOut, User } from "lucide-react";
+import { ChevronDown, LogOut, MoreVertical, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -27,11 +27,11 @@ export function UserMenu() {
               name={signedInUser?.name}
               className="h-6 w-6"
             />
-            <ChevronDown />
+            <MoreVertical className="h-4 w-4" />
           </span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent align="end" side="right" className="w-48">
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
             <Link href="/account">

@@ -4,6 +4,7 @@ import { memberRouter } from "./routers/member";
 import { postRouter } from "@/server/api/routers/post";
 import { userRouter } from "@/server/api/routers/user";
 import { inviteRouter } from "./routers/invite";
+import { userConfigRouter } from "./routers/user-config";
 
 export const appRouter = createTRPCRouter({
   group: groupRouter,
@@ -11,6 +12,7 @@ export const appRouter = createTRPCRouter({
   member: memberRouter,
   post: postRouter,
   user: userRouter,
+  userConfig: userConfigRouter,
 });
 
 export type AppRouter = typeof appRouter;

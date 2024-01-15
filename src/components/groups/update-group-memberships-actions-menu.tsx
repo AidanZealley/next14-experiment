@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/trpc/react";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { ConfirmationDialog } from "../confirmation-dialog";
+import { ConfirmationDialog } from "@/components/confirmation-dialog";
 import { friendlyTRPCClientErrorCode } from "@/lib/utils";
 
 type UpdateGroupMembershipsActionsMenuProps = {

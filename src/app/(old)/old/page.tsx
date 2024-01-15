@@ -1,11 +1,10 @@
 import { CreatePost } from "@/components/posts/create-post";
-import { LatestPost, LatestPostFallback } from "./_components/latest-post";
+import { LatestPost, LatestPostFallback } from "../_components/latest-post";
 import { Suspense } from "react";
-import { PostsList, PostsListFallback } from "./_components/posts-list";
+import { PostsList, PostsListFallback } from "../_components/posts-list";
 import { NotSignedIn } from "@/components/not-signed-in";
 import { api } from "@/trpc/server";
-
-const LIMIT = 2;
+import { INFINITE_POSTS_LIMIT } from "../../constants";
 
 export default async function Home() {
   const signedInUser = await api.user.signedInUser.query();
@@ -24,8 +23,10 @@ export default async function Home() {
         <div className="grid w-full max-w-xl gap-12">
           <CreatePost />
 
-          <Suspense fallback={<PostsListFallback limit={LIMIT} />}>
-            <PostsList limit={LIMIT} />
+          <Suspense
+            fallback={<PostsListFallback limit={INFINITE_POSTS_LIMIT} />}
+          >
+            <PostsList limit={INFINITE_POSTS_LIMIT} />
           </Suspense>
         </div>
       </div>

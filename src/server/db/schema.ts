@@ -23,7 +23,7 @@ export const posts = mysqlTable(
     id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
     text: varchar("text", { length: 255 }),
     userId: varchar("userId", { length: 255 }).notNull(),
-    groupId: varchar("userId", { length: 255 }).notNull(),
+    groupId: varchar("groupId", { length: 255 }).notNull(),
     createdAt: timestamp("created_at")
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -71,6 +71,8 @@ export const groupsRelations = relations(groups, ({ one, many }) => ({
   memberships: many(memberships),
   configuredBy: many(userConfigs),
 }));
+
+export type Group = InferSelectModel<typeof groups>;
 
 export const memberships = mysqlTable(
   "membership",

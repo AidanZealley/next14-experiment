@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 export const InvitesBadge = () => {
   const { data: invites } = api.invite.allForSignedInUser.useQuery();
 
-  if (!invites) {
+  if (!invites?.length) {
     return null;
   }
 
