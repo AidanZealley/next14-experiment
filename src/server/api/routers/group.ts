@@ -114,6 +114,7 @@ export const groupRouter = createTRPCRouter({
     .input(updateGroupSchema)
     .mutation(async ({ ctx, input }) => {
       await ctx.db.update(groups).set(input).where(eq(groups.id, input.id));
+      return true;
     }),
 
   delete: protectedGroupOwnerProcedure

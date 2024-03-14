@@ -1,7 +1,7 @@
 import { CreatePost } from "@/components/posts/create-post";
-import { LatestPost, LatestPostFallback } from "./_components/latest-post";
+import { LatestPost, LatestPostFallback } from "@/app/_components/latest-post";
 import { Suspense } from "react";
-import { PostsList, PostsListFallback } from "./_components/posts-list";
+import { PostsList, PostsListFallback } from "@/app/_components/posts-list";
 import { NotSignedIn } from "@/components/not-signed-in";
 import { api } from "@/trpc/server";
 import { INFINITE_POSTS_LIMIT } from "@/app/constants";

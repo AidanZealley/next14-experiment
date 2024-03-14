@@ -71,7 +71,7 @@ export const CreatePost = () => {
           <Button
             type="submit"
             size="lg"
-            className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-700 dark:text-white hover:dark:bg-blue-600"
+            className="bg-indigo-500 hover:bg-indigo-600 dark:bg-indigo-700 dark:text-white hover:dark:bg-indigo-600"
           >
             Post
           </Button>

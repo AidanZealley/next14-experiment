@@ -29,7 +29,9 @@ export const MainNavLink = ({
           active={segment === matchingSegment}
           className={cn(
             navigationMenuTriggerStyle(),
-            "w-full justify-start px-3",
+            "data-[active]:bg-indigo-900/5 data-[active]:text-indigo-500 dark:data-[active]:bg-indigo-600/5",
+            "hover:bg-indigo-900/10 hover:text-indigo-500 dark:hover:bg-indigo-600/10 dark:hover:text-indigo-500",
+            "w-full justify-start bg-slate-50 px-3 dark:bg-slate-900 ",
           )}
         >
           {children}

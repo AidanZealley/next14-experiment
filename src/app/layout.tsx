@@ -5,9 +5,12 @@ import { cookies } from "next/headers";
 
 import { TRPCReactProvider } from "@/trpc/react";
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import { SiteHeader } from "@/components/site-header";
 import { DeviceHeightProvider } from "@/components/providers/device-height-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { Sidebar } from "./_components/sidebar";
+import { UIProvider } from "@/components/providers/ui-provider";
+import { SidePanel } from "./_components/side-panel";
+import { MobileHeader } from "./_components/mobile-header";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -35,17 +38,26 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <DeviceHeightProvider>
-              <div className="grid gap-6 pt-16">
-                <div className="fixed top-0 w-full backdrop-blur-sm">
-                  <SiteHeader />
+            <UIProvider>
+              <DeviceHeightProvider>
+                <div className="grid min-h-0 grid-rows-[auto_1fr] md:grid-rows-none">
+                  <MobileHeader />
+                  <div className="grid min-h-0 md:grid-cols-[theme(spacing.64)_1fr]">
+                    <div className="hidden min-h-0 border-r border-slate-200 dark:border-slate-800 md:grid">
+                      <Sidebar />
+                    </div>
+                    <div className="grid overflow-auto">{children}</div>
+                  </div>
                 </div>
-                {children}
-              </div>
-              <div className="fixed bottom-0 right-0">
-                <Toaster />
-              </div>
-            </DeviceHeightProvider>
+                <SidePanel>
+                  <Sidebar />
+                </SidePanel>
+
+                <div className="fixed bottom-0 right-0">
+                  <Toaster />
+                </div>
+              </DeviceHeightProvider>
+            </UIProvider>
           </ThemeProvider>
         </TRPCReactProvider>
       </body>

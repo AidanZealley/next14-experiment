@@ -2,8 +2,10 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AppRouter } from "@/server/api/root";
 import { TRPCClientErrorLike } from "@trpc/client";
 import { TRPCError } from "@trpc/server";
-import { AlertCircle, Loader2 } from "lucide-react";
-import { Spinner } from "./spinner";
+import { AlertCircle } from "lucide-react";
+import { Spinner } from "@/components/spinner";
+import { StatusOverlayRenderer } from "./status-overlay-renderer";
+import { cn } from "@/lib/utils";
 
 type StatusOverlayProps = {
   isLoading?: boolean;
@@ -65,11 +67,15 @@ const StatusOverlayGood = ({
 
   return (
     <div
-      className={`transition-opacity duration-300 ease-out ${
-        isLoading ? "opacity-0" : ""
-      } ${isRefetching ? "opacity-50" : ""}`}
+      className={cn(
+        "transition-opacity duration-300 ease-out",
+        isLoading ? "opacity-0" : "",
+        isRefetching ? "opacity-50" : "",
+      )}
     >
-      {children}
+      <StatusOverlayRenderer isLoading={isLoading}>
+        {children}
+      </StatusOverlayRenderer>
     </div>
   );
 };
@@ -87,9 +93,10 @@ const StatusOverlayLoading = ({
   return (
     (isLoading || isRefetching) && (
       <div
-        className={`absolute inset-0 grid h-full place-items-center${
-          isRefetching ? " backdrop-blur-sm" : ""
-        }`}
+        className={cn(
+          "absolute inset-0 grid h-full place-items-center",
+          isRefetching ? " backdrop-blur-sm" : "",
+        )}
       >
         <Spinner />
       </div>
